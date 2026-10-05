@@ -432,6 +432,14 @@ Across split posts:
 | Claude Sonnet 5.5     | 0.203249 | **0.748416** | 0.119925 | **0.665971**  |
 | Jev                   | **0.535016** | 0.655367 | 0.740977 | 0.418649  |
 
+![Jev has the highest zero-shot F1 on all posts, unanimous posts, and split posts. Sonnet 5.5 and GPT-5.6 Terra are lowest on the full set and on split posts.](static/study_2_writeup/zero_shot/f1_grouped_bars.png){width=\linewidth}
+
+![Nova and Qwen land in the high-recall, low-precision region. GPT-5.6 Terra and Sonnet 5.5 land in the low-recall, high-precision region. Jev sits between them. Gray curves are constant F1.](static/study_2_writeup/zero_shot/precision_recall_scatter.png){width=\linewidth}
+
+![Nova and Qwen flag far more posts for removal than the actual remove rate. GPT-5.6 Terra and Sonnet 5.5 flag fewer. The dashed line is the share of posts whose modal label is remove.](static/study_2_writeup/zero_shot/predicted_remove_rate.png){width=\linewidth}
+
+![Accuracy sits near the always-keep baseline for GPT-5.6 Terra and Sonnet 5.5, while F1 stays low. On all posts, Sonnet 5.5 accuracy is about 0.80 and F1 is about 0.22. The dotted line is the accuracy of always predicting keep.](static/study_2_writeup/zero_shot/accuracy_f1_dumbbell.png){width=\linewidth}
+
 #### Few-shot baselines
 
 Across all posts:
@@ -464,6 +472,14 @@ Across split posts:
 | Claude Sonnet 5.5     | 0.307005  | **0.750226**  | 0.206767  | **0.595883**   |
 | Jev                   | **0.547683**  | 0.729001  | 0.613158  | 0.494842   |
 
+![Each line runs from zero-shot F1 to few-shot F1. Jev gains the most, from 0.49 to 0.66 on unanimous posts. Qwen's F1 on all posts falls.](static/study_2_writeup/few_shot/f1_slope_zero_to_few.png){width=\linewidth}
+
+![Cells are few-shot minus zero-shot. Several models trade recall for precision. Jev's unanimous F1 gain is the largest positive F1 cell.](static/study_2_writeup/few_shot/delta_heatmap.png){width=\linewidth}
+
+![Arrows run from the zero-shot point to the few-shot point. Marker shape is the slice (circle all posts, square unanimous, diamond split).](static/study_2_writeup/few_shot/precision_recall_arrows.png){width=\linewidth}
+
+![Few-shot F1, in the same layout as the zero-shot chart. Jev remains highest on every slice.](static/study_2_writeup/few_shot/f1_grouped_bars.png){width=\linewidth}
+
 ## Automated prompt tuning
 
 We used DSPy and GEPA to optimize the original few-shot prompt. We used `GPT 5.6-Terra` to review and rewrite the prompts. We trained and tested the optimization on only unanimous keep/remove labels. The new few-shot prompt improved F1 from 0.68 to 0.84 on the hold-out set.
@@ -472,6 +488,8 @@ We used DSPy and GEPA to optimize the original few-shot prompt. We used `GPT 5.6
 |---------------|----------|----------|----------|-----------|
 | Original      | 0.680851 | 0.754098 | 0.533333 | 0.941176  |
 | Selected      | 0.835821 | 0.819672 | 0.933333 | 0.756757  |
+
+![On the 61-post unanimous hold-out, the optimized prompt raises GPT-5.6 Terra recall from 0.53 to 0.93 and lowers precision from 0.94 to 0.76. Cell counts were reconstructed from those rates (30 remove, 31 keep).](static/study_2_writeup/prompt_tuning/terra_holdout_confusion.png){width=\linewidth}
 
 We rerun Jev, Amazon Nova Micro, and Qwen 3 32B on this optimized prompt (GPT-5.6 Terra and Claude Sonnet 5.5 underperform these models and are 10x the price).
 
@@ -498,6 +516,10 @@ Across split posts:
 | Amazon Nova Micro   | 0.259358     | **0.747209** | 0.165414       | **0.600273** |
 | Qwen 3 32B          | 0.487348     | 0.592395     | **0.724060**   | 0.367277     |
 | Jev                 | **0.541099** | 0.678201     | 0.709023       | 0.437486     |
+
+![F1 from zero-shot to few-shot to the optimized prompt, for the three models rescored on the full cohort. Nova's F1 drops at the optimized step on all posts and on split posts. Jev stays near the few-shot level and does not beat few-shot on any slice.](static/study_2_writeup/prompt_tuning/f1_three_stage.png){width=\linewidth}
+
+![Change in F1 when the prompt tuned on GPT-5.6 Terra is applied to Nova, Qwen, and Jev. Nova loses F1 on all posts and on split posts even though its precision rises. Qwen is nearly flat. Jev is slightly worse, and clearly worse on unanimous posts.](static/study_2_writeup/prompt_tuning/transfer_f1_delta.png){width=\linewidth}
 
 ## Fine-tuning a classifier
 
@@ -538,6 +560,16 @@ All-label adapter
 | Unanimous   |     4051     |  0.9938  |  0.9521   | 0.9675  | 0.9597 |
 | Split       |     9941     |  0.9506  |  0.8880   | 0.9331  | 0.9100 |
 | All labels  |    13992     |  0.9631  |  0.8945   | 0.9367  | 0.9151 |
+
+![The unanimous adapter reaches 0.98 F1 on unanimous posts and falls to 0.48 on split posts. The all-label adapter stays between 0.91 and 0.96 on every evaluation set.](static/study_2_writeup/fine_tuning/train_eval_f1_heatmap.png){width=\linewidth}
+
+![Precision, recall, and accuracy for the same training-set by evaluation-set grid. The unanimous adapter's recall on split posts is 0.38.](static/study_2_writeup/fine_tuning/train_eval_other_metrics.png){width=\linewidth}
+
+![Precision and recall by adapter and evaluation slice. The unanimous adapter's low F1 on split posts is a drop in recall, not a collapse of precision.](static/study_2_writeup/fine_tuning/precision_recall_by_adapter.png){width=\linewidth}
+
+![On all posts, the best prompting F1 is 0.56 (few-shot Jev). The split adapter reaches 0.89 and the all-label adapter reaches 0.92. The unanimous adapter, evaluated on all posts, stays near the prompting baselines.](static/study_2_writeup/fine_tuning/ft_vs_prompting_f1.png){width=\linewidth}
+
+![Best prompting F1 stays between about 0.49 and 0.66. The all-label adapter is about 0.92 on all posts, 0.96 on unanimous posts, and 0.91 on split posts. Dots are the other models. Terra and Sonnet were not rerun with the optimized prompt. The earlier GEPA gain, from 0.68 to 0.84 F1, was on a 61-post unanimous hold-out for GPT-5.6 Terra and does not appear in these full-cohort bars. Prompt tuning does not beat few-shot Jev on any slice.](static/study_2_writeup/cross_cutting/approach_f1.png){width=\linewidth}
 
 ## Training a calibrated classifier
 
