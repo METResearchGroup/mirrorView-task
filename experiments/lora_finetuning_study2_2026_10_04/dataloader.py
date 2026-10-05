@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import math
 
-from datasets import Dataset
-
 from shared.data.dataloader import load_dataset
 from shared.data.registry import UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS
 from shared.models.llm.prompt import OPTIMIZED_STUDY_PROMPT_TEMPLATE, SYSTEM_CONTENT
@@ -54,6 +52,8 @@ def row_to_prompt_completion(row: dict) -> dict[str, list[dict[str, str]]]:
 
 def load_training_dataset(dataset_name: str) -> Dataset:
     """Return one registered label table in TRL SFT format."""
+    from datasets import Dataset
+
     frame = load_dataset(dataset_name)
     missing = _REQUIRED_COLUMNS - set(frame.columns)
     if missing:

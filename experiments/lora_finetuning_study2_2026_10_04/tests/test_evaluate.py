@@ -10,7 +10,7 @@ import torch
 from safetensors.torch import load_file, save_file
 
 from experiments.lora_finetuning_study2_2026_10_04 import evaluate as evaluate_mod
-from experiments.lora_finetuning_study2_2026_10_04.train import LORA_TARGET_MODULES
+from experiments.lora_finetuning_study2_2026_10_04.constants import LORA_TARGET_MODULES
 
 
 def test_rewrite_adapter_key_for_vllm_flattens_peft_default() -> None:

@@ -42,10 +42,7 @@ from shared.models.llm.infra.upload_to_hf_jobs import (
     HuggingFaceJobConfig,
     upload_to_hf_jobs,
 )
-from shared.models.llm.training.lora_training import parse_s3_uri
-
-from experiments.lora_finetuning_study2_2026_10_04.dataloader import row_to_prompt_completion
-from experiments.lora_finetuning_study2_2026_10_04.train import (
+from experiments.lora_finetuning_study2_2026_10_04.constants import (
     ADAPTER_S3_PREFIX,
     ARTIFACTS_BUCKET,
     LORA_RANK,
@@ -53,8 +50,8 @@ from experiments.lora_finetuning_study2_2026_10_04.train import (
     MAX_LENGTH,
     MODEL_NAME,
     build_adapter_s3_uri,
+    parse_s3_uri,
 )
-
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = EXPERIMENT_DIR.parents[1]
 DOCKERFILE_EVAL = EXPERIMENT_DIR / "Dockerfile.eval"
@@ -560,6 +557,10 @@ def score_label_table(
     adapter_dir: Path,
 ) -> list[dict[str, Any]]:
     """Generate one keep/remove decision per row with vLLM."""
+    from experiments.lora_finetuning_study2_2026_10_04.dataloader import (
+        row_to_prompt_completion,
+    )
+
     message_lists = [row_to_prompt_completion(row)["prompt"] for row in rows]
     started = time.perf_counter()
     generations = _chat_generations(llm, message_lists, adapter_dir)
