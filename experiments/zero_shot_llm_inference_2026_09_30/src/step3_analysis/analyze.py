@@ -33,7 +33,7 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
     EXPECTED_SPLIT_RECORD_COUNT,
     EXPECTED_TOTAL_RECORD_COUNT,
     EXPECTED_UNANIMOUS_RECORD_COUNT,
-    MODEL_REGISTRY,
+    get_model_definition_by_folder,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     apply_lab_aws_credentials_when_unset,
@@ -475,8 +475,9 @@ def build_model_metric_row(
 def build_model_metrics_table(
     partitions: PreparedInputPartitions,
     model_runs: tuple[LoadedModelRun, ...],
+    model_folders: tuple[str, ...],
 ) -> tuple[ModelMetricRow, ...]:
-    """Build the standardized twelve-row model metric table."""
+    """Build one metric row for each configured model and dataset."""
     runs_by_folder = {run.model_folder: run for run in model_runs}
     rows: list[ModelMetricRow] = []
     partition_by_dataset = {
@@ -486,11 +487,11 @@ def build_model_metrics_table(
     }
     for dataset in _DATASET_ORDER:
         partition_rows = partition_by_dataset[dataset]
-        for model in MODEL_REGISTRY:
-            loaded = runs_by_folder[model.folder_name]
+        for folder_name in model_folders:
+            loaded = runs_by_folder[folder_name]
             predictions = _predictions_map(loaded.predictions)
             rows.append(
-                build_model_metric_row(dataset, model.folder_name, partition_rows, predictions)
+                build_model_metric_row(dataset, folder_name, partition_rows, predictions)
             )
     return tuple(rows)
 
@@ -504,7 +505,7 @@ def load_run_inputs(
     run_id: str,
     variant: Study2InferenceVariant,
 ) -> LoadedAnalysisRun:
-    """Load prepared input and four completed model outputs for one run."""
+    """Load prepared input and the variant's completed model outputs."""
     safe_run_id = validate_path_segment(run_id)
     input_manifest, prepared_records = load_verified_prepared_input(store, variant)
     prepared_post_ids = frozenset(record.post_id for record in prepared_records)
@@ -529,12 +530,17 @@ def load_run_inputs(
 
 def validate_run_inputs(loaded: LoadedAnalysisRun) -> None:
     """Reject incomplete or mismatched inputs before calculation."""
-    if len(loaded.model_runs) != len(MODEL_REGISTRY):
-        raise ValueError("expected four completed model runs")
+    _require_configured_model_runs(loaded)
     partitions = partition_prepared_records(loaded.prepared_records)
     validate_prepared_partitions(partitions)
     for model_run in loaded.model_runs:
         _validate_model_run_predictions(model_run, loaded.prepared_records)
+
+
+def _require_configured_model_runs(loaded: LoadedAnalysisRun) -> None:
+    observed = tuple(run.model_folder for run in loaded.model_runs)
+    if observed != loaded.variant.model_folders:
+        raise ValueError("model runs must match the active variant order")
 
 
 def _load_completed_model_runs(
@@ -547,7 +553,8 @@ def _load_completed_model_runs(
     variant: Study2InferenceVariant,
 ) -> tuple[LoadedModelRun, ...]:
     loaded_runs: list[LoadedModelRun] = []
-    for model in MODEL_REGISTRY:
+    for folder_name in variant.model_folders:
+        model = get_model_definition_by_folder(folder_name)
         loaded_runs.append(
             _load_one_completed_model_run(
                 store,
@@ -703,7 +710,11 @@ def calculate_analysis_tables(loaded: LoadedAnalysisRun) -> AnalysisTables:
     split_remove_vote_counts = build_split_remove_vote_counts(partitions.split_rows)
     metric_partitions = build_metric_partitions(partitions, loaded.variant)
     _validate_metric_partition_counts(metric_partitions, loaded.variant)
-    model_metrics = build_model_metrics_table(metric_partitions, loaded.model_runs)
+    model_metrics = build_model_metrics_table(
+        metric_partitions,
+        loaded.model_runs,
+        loaded.variant.model_folders,
+    )
     return AnalysisTables(label_counts, split_remove_vote_counts, model_metrics)
 
 
@@ -774,10 +785,13 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _print_success_line(prefix: str, variant: Study2InferenceVariant) -> None:
+    model_count = len(variant.model_folders)
+    metric_row_count = model_count * len(_DATASET_ORDER)
     summary = (
         f"{prefix} input_rows={EXPECTED_TOTAL_RECORD_COUNT} "
         f"unanimous_rows={EXPECTED_UNANIMOUS_RECORD_COUNT} "
-        f"split_rows={EXPECTED_SPLIT_RECORD_COUNT} models=4 metric_rows=12 artifacts=5"
+        f"split_rows={EXPECTED_SPLIT_RECORD_COUNT} "
+        f"models={model_count} metric_rows={metric_row_count} artifacts=5"
     )
     if not variant.metric_exclusion_post_ids:
         print(summary)

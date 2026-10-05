@@ -90,6 +90,7 @@ def run_inference_cli(
         args.batch_size,
         args.max_concurrency,
         args.max_tokens,
+        variant,
     )
     apply_lab_aws_credentials_when_unset()
     store = CampaignObjectStore(variant.s3_bucket, region_name=DEFAULT_S3_REGION)
@@ -146,6 +147,7 @@ def run_model_inference(
         batch_size,
         max_concurrency,
         max_tokens,
+        variant,
     )
     run_plan = _build_inference_run_plan(store, run_id, model, limit, variant)
     run_state = _run_pending_record_batches(
@@ -272,20 +274,34 @@ def validate_inference_arguments(
     batch_size: int,
     max_concurrency: int,
     max_tokens: int,
+    variant: Study2InferenceVariant,
 ) -> ModelDefinition:
     """Validate CLI configuration before any AWS client is constructed.
+
+    Parameters
+    ----------
+    variant
+        Active experiment. The model must be in ``variant.model_folders``.
 
     Raises
     ------
     ValueError
-        When arguments are unsafe or refer to an unknown model folder.
+        When arguments are unsafe, the folder is unknown, or the active
+        experiment does not enable that model.
     """
     validate_path_segment(run_id)
     validate_positive_optional_limit(limit)
     _validate_positive_integer(batch_size, "batch_size")
     _validate_positive_integer(max_concurrency, "max_concurrency")
     _validate_positive_integer(max_tokens, "max_tokens")
-    return get_model_definition_by_folder(model_folder)
+    model = get_model_definition_by_folder(model_folder)
+    _require_model_enabled(model, variant)
+    return model
+
+
+def _require_model_enabled(model: ModelDefinition, variant: Study2InferenceVariant) -> None:
+    if model.folder_name not in variant.model_folders:
+        raise ValueError(f"model folder is not enabled for this experiment: {model.folder_name}")
 
 
 def _parse_args() -> argparse.Namespace:
@@ -296,7 +312,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--model",
         required=True,
-        help="Confirmed model folder name from the Study 2 registry",
+        help="Model folder enabled for the active experiment",
     )
     parser.add_argument(
         "--limit",

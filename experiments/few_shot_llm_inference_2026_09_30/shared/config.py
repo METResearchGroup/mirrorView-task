@@ -45,4 +45,10 @@ FEW_SHOT_VARIANT = Study2InferenceVariant(
     prompt_name="BASELINE_FEW_SHOT_KEEP_REMOVE_PROMPT",
     prompt_sha256=_confirmed_few_shot_prompt_sha256(),
     metric_exclusion_post_ids=_METRIC_EXCLUSION_POST_IDS,
+    model_folders=(
+        "amazon_nova_micro",
+        "qwen3_32b",
+        "openai_gpt_5_6_terra",
+        "claude_sonnet_5_5",
+    ),
 )
