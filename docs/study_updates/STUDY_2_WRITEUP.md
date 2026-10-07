@@ -176,7 +176,7 @@ We then use LLMs to perform feature extraction. We follow a [protocol](https://w
 
 ### Methods
 
-1. **Setup**: We assign a keep/remove label to each original + mirror combination based on the modal label.
+1. **Setup**: We assign a keep/remove label to each original + mirror combination based on the majority label.
 2. **Use an LLM to mine features**: We pass in batches of 10 pairs of posts that were majority keep and 10 pairs of posts that were majority remove. We then ask an LLM to extract features to distinguish posts that were kept and posts that were removed. We do this across a few categories of features (see below).
 3. **Embed the feature records and cluster them**: We embed the features and then use K-Means to generate clusters. We do this instead of recursively asking an LLM to generate a feature category given a list of features since we want a sense of "global similarity" across all features. We choose K-Means since HDBSCAN rendered unstable estimates.
 4. **Name each cluster**: We take each cluster and pass them to an LLM to generate a human-readable label and description of each feature cluster. This generates a compiled list of feature groups.
@@ -284,7 +284,7 @@ We evaluate our models across 3 versions of our dataset. We filter for posts wit
 
 1. Unanimous posts (`n=4,051`): posts that were unanimously kept or unanimously removed across labelers.
 2. Split posts (`n=9,941`): posts that were neither unanimously kept nor unanimously removed across labelers.
-3. All posts (`n=13,992`): the total dataset of posts. For these posts, we take the modal label.
+3. All posts (`n=13,992`): the total dataset of posts. For these posts, we take the majority label.
 
 
 
@@ -649,3 +649,46 @@ We see that the classifier's performance on our task is sensitive to the thresho
 ### Calibrated classifier fine-tuning results
 
 **Work is still ongoing and pending results**
+
+## Which high-toxicity posts are kept
+
+High toxicity posts are kept at 49.8% across 4,983 posts. That number is the average of each post's own keep rate. The stored majority label counts a tie as remove. With that label, 2,311 posts are labeled keep (46.4%) and 2,672 posts are labeled remove (53.6%).
+
+These counts use the stored topic assignments and the stored feature labels. Topic names below are the short names from the tables above.
+
+Among topics with at least 30 high-toxicity posts, the keep rate runs from 31.1% to 59.5%. Anti Trump harassment is kept at 31.1% (140 posts, 26 majority keep). Criticism of Republicans is kept at 40.5% (228 posts). MAGA and institutions is kept at 44.1% (314 posts). US and Iran is kept at 59.5% (45 posts), and climate and fossil fuels is kept at 58.8% (47 posts). Trump media and lying is the largest of these topics, with 403 posts, and it is kept at 52.9% (207 majority keep). Border and immigration is kept at 53.6% (137 posts), the same high-toxicity cell as in the chart above.
+
+2,091 high-toxicity posts are ungrouped, which is 42.0% of this set. Their keep rate is 50.8%. They are 43.6% of the majority keep posts and 40.6% of the majority remove posts. Another 674 posts sit in grouped topics with fewer than 30 high-toxicity posts, and their keep rate is 51.2%. The chart leaves those two rows off, because each row is about the same share of both groups. Each bar is that topic's share of the majority keep posts or of the majority remove posts.
+
+
+| Topic                    | Posts | Majority keep | Keep rate |
+| ------------------------ | ----- | ------------- | --------- |
+| Anti Trump harassment    | 140   | 26            | 31.1%     |
+| Criticism of Republicans | 228   | 75            | 40.5%     |
+| Anti fascism messaging   | 86    | 31            | 42.0%     |
+| MAGA and institutions    | 314   | 112           | 44.1%     |
+| Abolish ICE              | 95    | 38            | 44.2%     |
+| Trump media and lying    | 403   | 207           | 52.9%     |
+| Climate and fossil fuels | 47    | 29            | 58.8%     |
+| US and Iran              | 45    | 32            | 59.5%     |
+| Ungrouped                | 2,091 | 1,007         | 50.8%     |
+
+
+![Named topics among high-toxicity posts](static/study_2_writeup/high_toxicity_topic_composition.png)
+
+The feature labels are the same present-or-absent labels as the feature charts above. Limited Profanity Within Argument is on 50.4% of the majority keep posts and 33.0% of the majority remove posts. The keep rate is 55.8% when that feature is present and 45.6% when it is absent. Substantive Policy and Institutional Claims are on 39.0% of the majority keep posts and 25.6% of the majority remove posts. The keep rate is 56.2% when that feature is present and 46.8% when it is absent.
+
+Brief Slogan-Like Insult Attacks are on 38.1% of the majority keep posts and 54.6% of the majority remove posts. The keep rate is 44.6% when that feature is present and 54.4% when it is absent. Dense Profanity and Vulgar Insults are on 5.4% of the majority keep posts and 19.2% of the majority remove posts. The keep rate is 32.3% when that feature is present and 52.3% when it is absent.
+
+Escalatory Partisan Hostility is on 91.6% of the majority keep posts and 96.3% of the majority remove posts. Hostile Outrage Venting is on 89.7% of the majority keep posts and 95.6% of the majority remove posts. The posts without Escalatory Partisan Hostility are kept at 61.2%. The posts without Hostile Outrage Venting are kept at 62.3%.
+
+
+| Feature                                      | Share of kept | Share of removed | Keep rate if present | Keep rate if absent |
+| -------------------------------------------- | ------------- | ---------------- | -------------------- | ------------------- |
+| Limited Profanity Within Argument            | 50.4%         | 33.0%            | 55.8%                | 45.6%               |
+| Substantive Policy and Institutional Claims  | 39.0%         | 25.6%            | 56.2%                | 46.8%               |
+| Brief Slogan-Like Insult Attacks             | 38.1%         | 54.6%            | 44.6%                | 54.4%               |
+| Dense Profanity and Vulgar Insults           | 5.4%          | 19.2%            | 32.3%                | 52.3%               |
+
+
+![Feature gap inside high-toxicity posts](static/study_2_writeup/high_toxicity_feature_presence_gap.png)
