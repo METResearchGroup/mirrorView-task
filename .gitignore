@@ -104,6 +104,9 @@ experiments/study_progress_dashboard_2026_09_11/cache/
 # Overprovisioned mixed-feed assignment cache lives in S3. Keep the local copy out of git.
 experiments/upsample_mixed_study_feeds_2026_09_11/cache/
 
+# High-toxicity keep versus remove tables and the download cache live in S3.
+experiments/high_toxicity_kept_vs_removed_2026_10_07/outputs/
+
 # Reasoning-during-moderation local cache and outputs live in S3.
 experiments/reasoning_during_moderation_2026_09_15/cache/
 experiments/reasoning_during_moderation_2026_09_15/outputs/
