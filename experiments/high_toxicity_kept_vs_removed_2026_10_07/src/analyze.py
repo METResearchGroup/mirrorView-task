@@ -538,26 +538,40 @@ def render_results(
     return "\n".join(lines)
 
 
-def plot_topic_composition(topics: pd.DataFrame, path: Path) -> None:
-    """Horizontal bars of each named topic's share of the two modal groups.
+REMOVED_MORE_COLOR = "#E45756"
+KEPT_MORE_COLOR = "#4C78A8"
+TOPIC_GAP_EXTREMES = 8
 
-    Ungrouped posts and the small-topic rollup are left off the chart. Each is
-    about the same share of both modal groups, and plotting them on this axis
-    hides the named topics.
+
+def plot_topic_composition(topics: pd.DataFrame, path: Path) -> None:
+    """Horizontal bars of remove share minus keep share for the extreme topics.
+
+    The gap is the share of high-toxicity posts in that topic with a majority
+    remove label, minus the share with a majority keep label. Both shares use
+    that topic's high-toxicity posts as the denominator.     The chart keeps the
+    eight largest positive gaps and the eight largest negative gaps. Ungrouped
+    posts and the small-topic rollup are left off.
     """
     plot = topics.loc[~topics["topic_id"].isin([NOISE_TOPIC_ID, OTHER_TOPIC_ID])].copy()
-    plot["share_gap"] = plot["share_of_modal_remove"] - plot["share_of_modal_keep"]
-    plot = plot.sort_values("share_gap", ascending=True)
-    labels = [textwrap.fill(str(name), width=42) for name in plot["topic_name"]]
-    y = np.arange(len(plot))
-    height = 0.38
-    figure, axis = plt.subplots(figsize=(11, max(6, 0.48 * len(plot) + 1.4)))
-    axis.barh(y - height / 2, 100 * plot["share_of_modal_keep"], height=height, color=KEEP_COLOR, label="Share of majority keep")
-    axis.barh(y + height / 2, 100 * plot["share_of_modal_remove"], height=height, color=REMOVE_COLOR, label="Share of majority remove")
-    axis.set_yticks(y, labels)
-    axis.set_xlabel("Share of that group (%)")
-    axis.set_title("Named topics among high-toxicity posts")
-    axis.legend(frameon=False, ncol=2, loc="upper center", bbox_to_anchor=(0.62, 1.06))
+    if plot["n_posts"].eq(0).any():
+        raise ValueError("a named topic has no posts")
+    plot["gap"] = (plot["n_modal_remove"] - plot["n_modal_keep"]) / plot["n_posts"]
+    if len(plot) < TOPIC_GAP_EXTREMES * 2:
+        raise ValueError(f"need at least {TOPIC_GAP_EXTREMES * 2} named topics, found {len(plot)}")
+    positive = plot.nlargest(TOPIC_GAP_EXTREMES, "gap")
+    negative = plot.nsmallest(TOPIC_GAP_EXTREMES, "gap")
+    if set(positive["topic_id"]).intersection(negative["topic_id"]):
+        raise ValueError("a topic is in both the positive and negative extremes")
+    chosen = pd.concat([positive, negative], ignore_index=True).sort_values("gap", ascending=True)
+    labels = [textwrap.fill(str(name), width=32) for name in chosen["topic_name"]]
+    values = 100 * chosen["gap"].to_numpy(dtype=float)
+    colors = [REMOVED_MORE_COLOR if value >= 0 else KEPT_MORE_COLOR for value in values]
+    figure, axis = plt.subplots(figsize=(11, 8.6))
+    axis.barh(np.arange(len(chosen)), values, color=colors)
+    axis.set_yticks(np.arange(len(chosen)), labels)
+    axis.axvline(0, color="#444444", linestyle="--", linewidth=1.1, zorder=3)
+    axis.set_xlabel("Remove % minus keep %, among high-toxicity posts in the topic")
+    axis.set_title("Among high-toxicity posts, certain topics are removed more often than others")
     figure.tight_layout()
     path.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(path, dpi=150, bbox_inches="tight")
