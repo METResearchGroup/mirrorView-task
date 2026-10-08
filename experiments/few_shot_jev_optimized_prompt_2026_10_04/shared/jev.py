@@ -14,7 +14,7 @@ from experiments.zero_shot_jev_inference_2026_10_01.shared.jev import (
     build_remove_request,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import Study2InputRecord
-from shared.models.llm import OPTIMIZED_STUDY_PROMPT_TEMPLATE
+from shared.models.llm import JEV_OPTIMIZED_STUDY_PROMPT_TEMPLATE
 
 _DYNAMIC_BLOCK = "Post 1: {post_1_text}\n\nPost 2: {post_2_text}\n\n"
 _TERMINAL_LINE = "keep or remove"
@@ -73,5 +73,5 @@ def build_optimized_remove_request(record: Study2InputRecord) -> ClassifierReque
 
 
 OPTIMIZED_REMOVE_INSTRUCTIONS = build_optimized_remove_instructions(
-    OPTIMIZED_STUDY_PROMPT_TEMPLATE
+    JEV_OPTIMIZED_STUDY_PROMPT_TEMPLATE
 )
