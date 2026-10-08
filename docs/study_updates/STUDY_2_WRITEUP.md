@@ -254,6 +254,10 @@ Each bar is that topic's remove rate minus the average remove rate. The average 
 
 Each line is the share of posts with that many remove votes that have the topic. The dashed line is 0.5. Line color is the share at 5 remove votes minus 0.5. Red means that, among posts with 5 remove votes, the topic is present on more than half. Blue means it is present on less than half.
 
+![Certain topics are more common as a post is more likely to be removed](static/study_2_writeup/topic_by_keep_remove_by_association_extremes.png)
+
+This is the same chart, limited to the 6 topics with the highest share at 5 remove votes and the 6 topics with the lowest share.
+
 Similarly, we find that as toxicity of the post increases, hostile language increases and policy argument decreases, while substance-related references and mentions of political actors remain relatively constant.
 
 ![Topic Distribution by Toxicity](static/study_2_writeup/llm_generated_topic_by_toxicity.png)
