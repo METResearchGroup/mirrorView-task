@@ -198,8 +198,10 @@ The test accuracy of 0.6549 is below the 0.7324 accuracy of always predicting ke
 
 The clipped and unclipped linear scores are the same, because no prototype prediction fell outside 0 to 1. A later fit can still produce a value outside that range, and the stored clipped column is the one `RESULTS.md` reports.
 
-## Decisions to confirm
+## Confirmed decisions
 
-1. **Hold out 20 percent of the unique posts in each modal class, with seed 1.** The upsampled table already contains every regular post, so fitting on all 14,562 upsampled rows and scoring all 9,941 regular rows scores posts the model has seen. The holdout above leaves 11,663 train rows and 1,988 test rows, with no shared `post_id`. The same prototype, fit on every upsampled row and scored on every regular row, had test accuracy 0.6627 and test remove F1 0.5266. The alternative is the full-table fit.
-2. **Use the 30 binary columns in `post_feature_labels.parquet`.** The 30 columns are the feature labels from PR 323. They match `LABEL_TO_DETAIL`, and every split post joins. The alternative is the Jev probabilities in `jev_probabilities.parquet`, which is 1,011,383 bytes in the same folder.
-3. **Fit `LinearRegression` and limit scored predictions to 0 through 1.** Issue 358 asks for a linear regression of the remove proportion. On the prototype the limit changed no score. The alternative is a binomial GLM from `statsmodels`, which keeps the fitted mean inside 0 to 1 during fitting and is a different model.
+The user started the implementation plan on October 8, 2026 without changing these three recommendations.
+
+1. **Confirmed: hold out 20 percent of the unique posts in each modal class, with seed 1.** The upsampled table already contains every regular post, so fitting on all 14,562 upsampled rows and scoring all 9,941 regular rows scores posts the model has seen. The holdout above leaves 11,663 train rows and 1,988 test rows, with no shared `post_id`. The same prototype, fit on every upsampled row and scored on every regular row, had test accuracy 0.6627 and test remove F1 0.5266. The full-table fit stays unused.
+2. **Confirmed: use the 30 binary columns in `post_feature_labels.parquet`.** The 30 columns are the feature labels from PR 323. They match `LABEL_TO_DETAIL`, and every split post joins. The Jev probabilities in `jev_probabilities.parquet` stay unused.
+3. **Confirmed: fit `LinearRegression` and limit scored predictions to 0 through 1.** Issue 358 asks for a linear regression of the remove proportion. On the prototype the limit changed no score. A binomial GLM stays unused.
