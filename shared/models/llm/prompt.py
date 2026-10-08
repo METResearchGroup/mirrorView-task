@@ -1,11 +1,12 @@
-"""Study 2 keep/remove prompts for LoRA fine-tuning.
+"""Study 2 keep/remove prompts.
 
-``STUDY_PROMPT_TEMPLATE`` is the original study wording. ``{ADD_KEEP_REMOVE_FEATURES_ADDENDUM}``
-is left for the caller to fill; the Study 2 trainer passes an empty string.
+``STUDY_PROMPT_TEMPLATE`` is the original study wording. ``OPTIMIZED_STUDY_PROMPT_TEMPLATE``
+is the policy used for Study 2 LoRA training and for the optimized few-shot prompt.
+``format_optimized_study_prompt`` fills ``{post_1_text}`` and ``{post_2_text}``.
 
-``OPTIMIZED_STUDY_PROMPT_TEMPLATE`` is the policy used for Study 2 LoRA training.
-The answer token is ``keep`` or ``remove``, matching the label column. The pair
-under review is filled in through ``{post_1_text}`` and ``{post_2_text}``.
+Run from repo root::
+
+    PYTHONPATH=. uv run python -c "from shared.models.llm.prompt import format_optimized_study_prompt"
 """
 
 from __future__ import annotations
@@ -93,4 +94,35 @@ Post 2: {post_2_text}
 
 Return only the decision.
 
-keep or remove"""
+keep or remove
+"""
+
+_POST_1_PLACEHOLDER = "{post_1_text}"
+_POST_2_PLACEHOLDER = "{post_2_text}"
+
+
+def format_optimized_study_prompt(post_1_text: str, post_2_text: str) -> str:
+    """Render the optimized prompt with unchanged post text.
+
+    Parameters
+    ----------
+    post_1_text
+        Original-side post text inserted at the first placeholder.
+    post_2_text
+        Mirror-side post text inserted at the second placeholder.
+
+    Returns
+    -------
+    str
+        Prompt text with only the two post placeholders substituted.
+
+    Raises
+    ------
+    ValueError
+        When either placeholder is missing or repeated in the template.
+    """
+    template = OPTIMIZED_STUDY_PROMPT_TEMPLATE
+    if template.count(_POST_1_PLACEHOLDER) != 1 or template.count(_POST_2_PLACEHOLDER) != 1:
+        raise ValueError("optimized prompt must contain each post placeholder once")
+    rendered = template.replace(_POST_1_PLACEHOLDER, post_1_text, 1)
+    return rendered.replace(_POST_2_PLACEHOLDER, post_2_text, 1)

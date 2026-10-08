@@ -2,13 +2,21 @@
 
 ## 2026-10-04
 
-1. Study 2 can fine-tune Qwen3.5-4B with LoRA on the unanimous, split, and all keep/remove tables, and callers resolve API keys from AWS Secrets Manager. One command builds the training image and starts the three Hugging Face Jobs, each logging to its own Weights & Biases project. [PR #349](https://github.com/METResearchGroup/mirrorView-task/pull/349)
+1. Amazon Nova Micro and Qwen 3 32B scored the 13,992 five-labeler Study 2 pairs with the few-shot keep or remove prompt that DSPy optimized. On run `study2-dspy-optimized-few-shot-2026-10-04`, Qwen 3 32B has the higher remove-class F1 at 0.466, and Amazon Nova Micro has the higher accuracy at 0.803. The F1 and accuracy figures omit the same five demonstration rows that the baseline few-shot metrics omit. [PR #355](https://github.com/METResearchGroup/mirrorView-task/pull/355)
+2. Study 2 fine-tunes Qwen3.5-4B with LoRA on the unanimous, split, and all keep/remove tables, then scores each adapter with vLLM on SageMaker. On the 13,992 five-labeler posts, the all-label adapter has remove-class F1 0.9151 and accuracy 0.9631. [PR #349](https://github.com/METResearchGroup/mirrorView-task/pull/349) [PR #357](https://github.com/METResearchGroup/mirrorView-task/pull/357)
+
+## 2026-10-02
+
+1. Four Bedrock models run the issue 329 few-shot keep or remove prompt on the 13,992 five-labeler Study 2 pairs from the zero-shot input. On run `study2-few-shot-2026-10-01`, Qwen 3 32B has the highest remove-class F1 at 0.463, and Claude Sonnet 5.5 has the highest accuracy at 0.806. The F1 and accuracy figures omit five demonstration rows that also appear in the input. [PR #346](https://github.com/METResearchGroup/mirrorView-task/pull/346)
+2. A separate GEPA ablation scores the same prompt procedure on a 405-post cohort with 203 keep and 202 remove posts. On the 61-row test split, F1 moves from 0.680851 to 0.835821 and recall from 0.533333 to 0.933333. The finished natural-prevalence run is unchanged. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
+3. Jev 1.13.0 scores the same 13,992 Study 2 pairs with the ten-example keep or remove prompt. After dropping five demonstration matches from the metrics, remove-class F1 is 0.562 and accuracy is 0.788, at a measured cost of $1.036. [PR #348](https://github.com/METResearchGroup/mirrorView-task/pull/348)
 
 ## 2026-10-01
 
 1. Jev 1.13.0 scores the 13,992 five-labeler Study 2 pairs as a zero-shot keep or remove classifier, and the run writes prediction rows in the same schema the Bedrock models use. Remove-class F1 is 0.529 and accuracy is 0.713, at a measured cost of $0.427. [PR #341](https://github.com/METResearchGroup/mirrorView-task/pull/341)
 2. Study 2 zero-shot keep or remove inference can prepare the 13,992 five-labeler posts, resume one Bedrock model at a time into immutable S3 batches, and write remove-positive metric tables for the all, unanimous, and split slices. On run `study2-zero-shot-2026-10-01`, Qwen 3 32B has the highest remove-class F1 at 0.499, and Claude Sonnet 5.5 has the highest accuracy at 0.803. [PR #333](https://github.com/METResearchGroup/mirrorView-task/pull/333)
 3. Study 2 callers can load three keep and remove tables with equal class counts. `UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS` has 30,280 rows, `UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS` has 7,486 rows, and `UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS` has 14,562 rows. [Issue #338](https://github.com/METResearchGroup/mirrorView-task/issues/338). [PR #343](https://github.com/METResearchGroup/mirrorView-task/pull/343)
+4. Study 2 few-shot keep-or-remove optimization selected one GEPA instruction on the 405-row pilot. On the 61-row test split, F1 moved from 0.285714 to 0.545455 and recall from 0.200000 to 0.600000, with accuracy unchanged at 0.918033. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
 
 ## 2026-09-30
 

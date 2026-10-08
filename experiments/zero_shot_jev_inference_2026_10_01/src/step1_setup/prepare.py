@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 
+from experiments.zero_shot_jev_inference_2026_10_01.shared.config import JevInferenceVariant
 from experiments.zero_shot_jev_inference_2026_10_01.shared.constants import (
     EXPECTED_ALL,
     EXPECTED_SPLIT,
@@ -26,6 +27,7 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     apply_lab_aws_credentials_when_unset,
     parse_study2_input_jsonl_bytes,
+    serialize_json_document,
     sha256_hex,
 )
 
@@ -61,6 +63,48 @@ def prepare_input(store: CampaignObjectStore) -> InputManifest:
     return manifest
 
 
+def copy_prepared_input(
+    store: CampaignObjectStore,
+    source: JevInferenceVariant,
+    target: JevInferenceVariant,
+) -> InputManifest:
+    """Copy verified source records and write a target manifest for those bytes.
+
+    Parameters
+    ----------
+    store
+        Object store that can read ``source`` and create ``target`` keys.
+    source
+        Experiment whose records and manifest are copied.
+    target
+        Experiment that receives the same record bytes.
+
+    Returns
+    -------
+    InputManifest
+        Target manifest. Only ``records_s3_key`` differs from the source.
+
+    Raises
+    ------
+    FileNotFoundError
+        When either source object is missing.
+    ValueError
+        When the digest, counts, order, or endpoint post IDs do not match.
+    FileExistsError
+        When a target key already exists. Existing bytes are left in place.
+    """
+    records_bytes = _read_required_object(store, source.input_records_key)
+    manifest = InputManifest.model_validate_json(
+        _read_required_object(store, source.input_manifest_key)
+    )
+    _reject_invalid_input(records_bytes, manifest)
+    records = parse_study2_input_jsonl_bytes(records_bytes)
+    _reject_endpoint_mismatch(records, manifest)
+    target_manifest = manifest.model_copy(update={"records_s3_key": target.input_records_key})
+    _write_copied_input(store, target, records_bytes, target_manifest)
+    return target_manifest
+
+
 def main() -> None:
     """Copy the prepared input and print one summary line."""
     apply_lab_aws_credentials_when_unset()
@@ -93,6 +137,27 @@ def _reject_manifest_counts(manifest: InputManifest) -> None:
         raise ValueError("unanimous record count mismatch")
     if manifest.split_record_count != EXPECTED_SPLIT:
         raise ValueError("split record count mismatch")
+
+
+def _reject_endpoint_mismatch(
+    records: list[Study2InputRecord],
+    manifest: InputManifest,
+) -> None:
+    if records[0].post_id != manifest.first_post_id:
+        raise ValueError("first post id mismatch")
+    if records[-1].post_id != manifest.last_post_id:
+        raise ValueError("last post id mismatch")
+
+
+def _write_copied_input(
+    store: CampaignObjectStore,
+    target: JevInferenceVariant,
+    records_bytes: bytes,
+    manifest: InputManifest,
+) -> None:
+    store.put_new(target.input_records_key, records_bytes)
+    body = serialize_json_document(manifest.model_dump(mode="json"))
+    store.put_new(target.input_manifest_key, body)
 
 
 def _reject_post_id_order(records: list[Study2InputRecord]) -> None:
