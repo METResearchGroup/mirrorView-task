@@ -3,6 +3,7 @@
 ## 2026-10-04
 
 1. Amazon Nova Micro and Qwen 3 32B scored the 13,992 five-labeler Study 2 pairs with the few-shot keep or remove prompt that DSPy optimized. On run `study2-dspy-optimized-few-shot-2026-10-04`, Qwen 3 32B has the higher remove-class F1 at 0.466, and Amazon Nova Micro has the higher accuracy at 0.803. The F1 and accuracy figures omit the same five demonstration rows that the baseline few-shot metrics omit. [PR #355](https://github.com/METResearchGroup/mirrorView-task/pull/355)
+2. Jev 1.13.0 scores the 13,992 Study 2 pairs with the balanced GEPA keep or remove instruction and the ten labeled examples. After dropping five demonstration matches, remove-class F1 is 0.542 and accuracy is 0.739 at a measured cost of $1.077, with threshold curves and an overlay of human remove votes against six Jev probability bins. [PR #356](https://github.com/METResearchGroup/mirrorView-task/pull/356)
 
 ## 2026-10-02
 
