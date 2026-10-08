@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+# Build from the repo root:
+#   docker build -f experiments/lora_finetuning_study2_2026_10_04/Dockerfile.eval \
+#     -t "$HF_EVAL_IMAGE" .
+#
+# Eval-only image. Training stays on Dockerfile + a100-large.
+# v0.26.0 packs Qwen3.5 Gated DeltaNet LoRA targets (in_proj_qkvz, in_proj_ba).
+FROM vllm/vllm-openai:v0.26.0
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app \
+    PIP_NO_CACHE_DIR=1 \
+    HF_HOME=/tmp/huggingface
+
+WORKDIR /app
+
+# The base image ENTRYPOINT launches the OpenAI server. Jobs runs our command.
+ENTRYPOINT []
+
+# Do not install a second torch. Add only the packages this experiment imports
+# that the vLLM image does not ship.
+RUN pip install --upgrade pip && \
+    pip install \
+      "boto3>=1.42.88" \
+      "pandas>=2.0.0" \
+      "pyarrow>=14.0.0" \
+      "scikit-learn>=1.5" \
+      "python-dotenv>=1.2.2" \
+      "pyyaml>=6.0" \
+      "safetensors>=0.4.0"
+
+COPY shared /app/shared
+COPY lib /app/lib
+COPY experiments/lora_finetuning_study2_2026_10_04 /app/experiments/lora_finetuning_study2_2026_10_04
+
+CMD ["python3", "experiments/lora_finetuning_study2_2026_10_04/evaluate.py", "--help"]
